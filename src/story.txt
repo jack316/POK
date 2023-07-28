@@ -1,0 +1,80 @@
+const Story = {
+    // 可否關閉的故事視窗，初始值為 true
+    canClose: true,
+
+    // 顯示故事的函數，參數包括標題、內容、是否可以關閉
+    displayStory: function(title, content, canClose) {
+        // 將傳入的 canClose 值設定為物件的 canClose 屬性
+        this.canClose = canClose;
+
+        // 使故事容器可見
+        $(`#storyContainer`).style.display = 'block';
+
+        // 根據 canClose 的值來決定是否顯示關閉按鈕
+        $(`#storyClose`).style.display = canClose ? 'block' : 'none';
+
+        // 將傳入的 title 設定為故事標題
+        $(`#storyTitle`).innerHTML = title;
+
+        // 將傳入的 content 設定為故事內容
+        $(`#storyContent`).innerHTML = content;
+    },
+
+    // 定義的故事
+    stories: {
+        // 第一隻寶可夢的故事
+        firstPoke: function() {
+            // 故事標題
+            let title = '歡迎來到寶可夢的世界';
+
+            // 故事內容的 HTML
+            let storyHTML = '<p>為了幫助你開始，請選擇你的第一隻寶可夢</p>';
+
+            // 在故事內容中添加三張寶可夢圖片，每張圖片都有一個點擊事件，點擊時會選擇對應的寶可夢
+            storyHTML += '<p><img src="' + story.helpers.getPokeImg(1) + '" onclick="story.helpers.selectFirstPoke(1)">';
+            storyHTML += '<img src="' + story.helpers.getPokeImg(4) + '" onclick="story.helpers.selectFirstPoke(4)">';
+            storyHTML += '<img src="' + story.helpers.getPokeImg(7) + '" onclick="story.helpers.selectFirstPoke(7)"></p>';
+
+            // 顯示故事，並設定故事視窗不能關閉
+            story.displayStory(title, storyHTML, false);
+        }
+    },
+
+    // 幫助函數
+    helpers: {
+        // 根據寶可夢的 id 獲取寶可夢的圖片
+        getPokeImg: function(id) {
+            return POKEDEX[id - 1]['images']['normal']['front'];
+        },
+
+        // 選擇第一隻寶可夢的函數
+        selectFirstPoke: function(id) {
+            // 創建玩家的初始寶可夢
+            let starterPoke = new Poke(pokeById(id), 5);
+
+            // 將初始寶可夢添加到玩家的寶可夢列表中
+            player.addPoke(starterPoke);
+
+            // 將初始寶可夢添加到玩家的寶可圖鑑中
+            player.addPokedex(starterPoke.pokeName(), POKEDEXFLAGS.ownNormal);
+
+            // 在遊戲控制台顯示玩家已經收到了一隻新的寶可夢
+            dom.gameConsoleLog('You received a ' + player.activePoke().pokeName(), 'purple');
+
+            // 將玩家的活躍寶可夢設為他們寶可夢列表中的第一隻寶可夢
+            player.setActive(0);
+
+            // 恢復戰鬥循環
+            combatLoop.unpause();
+
+            // 渲染玩家和敵人的視圖
+            renderView(dom, enemy, player);
+
+            // 渲染列表框
+            dom.renderListBox();
+
+            // 隱藏故事容器
+            $(`#storyContainer`).style.display = 'none';
+        }
+    }
+};
