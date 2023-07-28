@@ -1,0 +1,86 @@
+<html>
+<head>
+<title>JP Words</title>
+<script src="https://cdn.jsdelivr.net/npm/umbrellajs" type="text/javascript"></script>
+<script src="core.js" type="text/javascript"></script>
+<style>
+div {
+font-size: 2em;
+}
+</style>
+</head>
+<body>
+<div id="display">
+</div>
+<div id="answer">
+</div>
+<button id="play">
+play (r)
+</button>
+<button id="reading">
+reading (1)
+</button>
+<button id="meaning">
+Meaning (2)
+</button>
+<button id="next">
+next (3)
+</button>
+</body>
+<script type="text/javascript">//<![CDATA[
+
+let maxTest = 6000;
+
+function getRandomInt(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min)) + min; //The maximum is exclusive and the minimum is inclusive
+}
+
+function playWord(kanji, kana) {
+  new Audio("https://assets.languagepod101.com/dictionary/japanese/audiomp3.php?kanji=" + kanji + "&kana=" + kana).play();
+}
+
+// get the elements
+let play = u('#play');
+let display = u('#display');
+let answer = u('#answer');
+let reading = u('#reading');
+let meaning = u('#meaning');
+let next = u('#next');
+
+let word = getRandomInt(0, maxTest); // random
+
+// load display
+display.text(words[word][0]);
+play.handle('click', function() {
+	playWord(words[word][0], words[word][1]);
+});
+reading.handle('click', function() {
+	answer.text(words[word][1]);
+});
+meaning.handle('click', function() {
+	answer.text(words[word][2]);
+});
+next.handle('click', function() {
+	word = getRandomInt(0, maxTest);
+	display.text(words[word][0]);
+	answer.text('');
+});
+
+u('body').handle('keypress', function(e) {
+	if (e.key == 'r') { // play
+		playWord(words[word][0], words[word][1]);
+	} else if (e.key == '1') { // reading
+		answer.text(words[word][1]);
+	} else if (e.key == '2') { // meaning
+		answer.text(words[word][2]);
+	} else if (e.key == '3') { // next
+		word = getRandomInt(0, maxTest);
+		display.text(words[word][0]);
+		answer.text('');
+	}
+});
+
+  //]]></script>
+</html>
